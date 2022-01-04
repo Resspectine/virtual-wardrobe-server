@@ -1,4 +1,4 @@
-import { IsBoolean, IsNumber, IsString } from 'class-validator';
+import { IsBoolean, IsDate, IsNumber, IsString } from 'class-validator';
 import { Tag } from 'src/tag/entity/tag.entity';
 
 export class GarmentDto {
@@ -22,6 +22,12 @@ export class GarmentDto {
 
   @IsBoolean()
   isFavorite: boolean;
+
+  @IsDate()
+  createdAt: Date;
+
+  @IsDate()
+  updatedAt: Date;
 
   tags: Tag[];
 }

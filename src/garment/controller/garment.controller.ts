@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { GarmentDto } from 'src/garment/dto/garment.dto';
 import { GarmentService } from 'src/garment/service/garment.service';
@@ -20,8 +21,12 @@ export class GarmentController {
   }
 
   @Get('/')
-  findAll(): Promise<GarmentDto[]> {
-    return this.garmentService.findAll();
+  findAll(
+    @Query('filter') filter?: string,
+    @Query('orderBy') orderBy?: string,
+    @Query('orderDirection') orderDirection?: 'ASC' | 'DESC',
+  ): Promise<GarmentDto[]> {
+    return this.garmentService.find(filter, orderBy, orderDirection);
   }
 
   @Patch('/:id')
@@ -35,6 +40,11 @@ export class GarmentController {
   @Patch('/wear/:id')
   wearGarmentById(@Param('id') id: string): Promise<GarmentDto> {
     return this.garmentService.updateGarmentWearAmount(Number(id));
+  }
+
+  @Patch('/favorite/:id')
+  favoriteGarmentById(@Param('id') id: string): Promise<GarmentDto> {
+    return this.garmentService.updateGarmentFavoriteStatus(Number(id));
   }
 
   @Delete('/:id')

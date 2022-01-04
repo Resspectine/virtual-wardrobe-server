@@ -1,10 +1,12 @@
 import { Tag } from 'src/tag/entity/tag.entity';
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinTable,
   ManyToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
@@ -29,6 +31,12 @@ export class Garment {
 
   @Column({ nullable: false, name: 'is_favorite' })
   isFavorite: boolean;
+
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
 
   @ManyToMany(() => Tag, (tag: Tag) => tag.garments)
   @JoinTable()
