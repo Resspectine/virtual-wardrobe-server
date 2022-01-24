@@ -1,10 +1,12 @@
 import { Tag } from 'src/tag/entity/tag.entity';
+import User from 'src/user/entity/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
   JoinTable,
   ManyToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -41,4 +43,7 @@ export class Garment {
   @ManyToMany(() => Tag, (tag: Tag) => tag.garments)
   @JoinTable()
   tags: Tag[];
+
+  @ManyToOne(() => User, (user) => user.garments)
+  user: User;
 }

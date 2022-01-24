@@ -1,54 +1,103 @@
 import {
   Body,
   Controller,
+  createParamDecorator,
   Delete,
+  ExecutionContext,
   Get,
   Param,
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
+import JwtAuthenticationGuard from 'src/authentication/guards/jwt-authentication.guard';
 import { GarmentDto } from 'src/garment/dto/garment.dto';
 import { GarmentService } from 'src/garment/service/garment.service';
+import UserEntity from 'src/user/entity/user.entity';
+
+export const User = createParamDecorator(
+  (_, ctx: ExecutionContext): UserEntity => {
+    return ctx.switchToHttp().getRequest().user;
+  },
+);
 
 @Controller('garment')
 export class GarmentController {
   constructor(private garmentService: GarmentService) {}
 
   @Post('/')
-  create(@Body() garment: GarmentDto): Promise<GarmentDto> {
-    return this.garmentService.create(garment);
+  @UseGuards(JwtAuthenticationGuard)
+  create(
+    @User() user: UserEntity,
+    @Body() garment: GarmentDto,
+  ): Promise<GarmentDto> {
+    return this.garmentService.create({ userId: user.id, garment });
   }
 
   @Get('/')
+  @UseGuards(JwtAuthenticationGuard)
   findAll(
-    @Query('filter') filter?: string,
+    @User() user: UserEntity,
+    @Query('filter') tagIds?: string,
     @Query('orderBy') orderBy?: string,
     @Query('orderDirection') orderDirection?: 'ASC' | 'DESC',
   ): Promise<GarmentDto[]> {
-    return this.garmentService.find(filter, orderBy, orderDirection);
+    return this.garmentService.find({
+      userId: user.id,
+      tagIds,
+      orderBy,
+      orderDirection,
+    });
   }
 
   @Patch('/:id')
+  @UseGuards(JwtAuthenticationGuard)
   updateById(
+    @User() user: UserEntity,
     @Param('id') id: string,
     @Body() garment: GarmentDto,
   ): Promise<GarmentDto> {
-    return this.garmentService.updateGarment(Number(id), garment);
+    return this.garmentService.updateGarment({
+      id: Number(id),
+      garment,
+      userId: user.id,
+    });
   }
 
   @Patch('/wear/:id')
-  wearGarmentById(@Param('id') id: string): Promise<GarmentDto> {
-    return this.garmentService.updateGarmentWearAmount(Number(id));
+  @UseGuards(JwtAuthenticationGuard)
+  wearGarmentById(
+    @User() user: UserEntity,
+    @Param('id') id: string,
+  ): Promise<GarmentDto> {
+    return this.garmentService.updateGarmentWearAmount({
+      id: Number(id),
+      userId: user.id,
+    });
   }
 
   @Patch('/favorite/:id')
-  favoriteGarmentById(@Param('id') id: string): Promise<GarmentDto> {
-    return this.garmentService.updateGarmentFavoriteStatus(Number(id));
+  @UseGuards(JwtAuthenticationGuard)
+  favoriteGarmentById(
+    @User() user: UserEntity,
+    @Param('id') id: string,
+  ): Promise<GarmentDto> {
+    return this.garmentService.updateGarmentFavoriteStatus({
+      id: Number(id),
+      userId: user.id,
+    });
   }
 
   @Delete('/:id')
-  deleteById(@Param('id') id: string): Promise<GarmentDto[]> {
-    return this.garmentService.deleteGarment(Number(id));
+  @UseGuards(JwtAuthenticationGuard)
+  deleteById(
+    @User() user: UserEntity,
+    @Param('id') id: string,
+  ): Promise<GarmentDto[]> {
+    return this.garmentService.deleteGarment({
+      id: Number(id),
+      userId: user.id,
+    });
   }
 }
