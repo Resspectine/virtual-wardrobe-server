@@ -9,8 +9,11 @@ import {
   Patch,
   Post,
   Query,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import JwtAuthenticationGuard from 'src/authentication/guards/jwt-authentication.guard';
 import { GarmentDto } from 'src/garment/dto/garment.dto';
 import { GarmentService } from 'src/garment/service/garment.service';
@@ -28,6 +31,7 @@ export class GarmentController {
 
   @Post('/')
   @UseGuards(JwtAuthenticationGuard)
+  @UseInterceptors(FileInterceptor('file'))
   create(
     @User() user: UserEntity,
     @Body() garment: GarmentDto,
@@ -91,11 +95,20 @@ export class GarmentController {
 
   @Delete('/:id')
   @UseGuards(JwtAuthenticationGuard)
-  deleteById(
+  deleteById(@User() user: UserEntity, @Param('id') id: string): Promise<void> {
+    return this.garmentService.deleteGarment({
+      id: Number(id),
+      userId: user.id,
+    });
+  }
+
+  @Get('/:id')
+  @UseGuards(JwtAuthenticationGuard)
+  getById(
     @User() user: UserEntity,
     @Param('id') id: string,
-  ): Promise<GarmentDto[]> {
-    return this.garmentService.deleteGarment({
+  ): Promise<GarmentDto> {
+    return this.garmentService.getById({
       id: Number(id),
       userId: user.id,
     });

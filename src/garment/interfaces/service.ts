@@ -8,6 +8,10 @@ export interface GarmentCreate extends AuthorizedMethod {
   garment: GarmentDto;
 }
 
+export interface GarmentGetById extends AuthorizedMethod {
+  id: number;
+}
+
 export interface GarmentFindAll extends AuthorizedMethod {
   orderBy?: string;
   orderDirection?: 'ASC' | 'DESC';

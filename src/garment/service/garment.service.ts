@@ -1,8 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { FilesService } from 'src/files/service/files.service';
 import { GarmentDto } from 'src/garment/dto/garment.dto';
 import { Tag } from 'src/tag/entity/tag.entity';
-import User from 'src/user/entity/user.entity';
 import { UsersService } from 'src/user/service/user.service';
 import { Repository } from 'typeorm';
 import { Garment } from '../entity/garment.entity';
@@ -13,6 +13,7 @@ import {
   GarmentFind,
   GarmentFindAll,
   GarmentFindByTagIds,
+  GarmentGetById,
   GarmentUpdateGarment,
   GarmentUpdateGarmentFavoriteStatus,
   GarmentUpdateGarmentWearAmount,
@@ -26,6 +27,7 @@ export class GarmentService {
     @InjectRepository(Tag)
     private tagRepository: Repository<Tag>,
     private userService: UsersService,
+    private fileService: FilesService,
   ) {}
 
   async create({ garment, userId }: GarmentCreate): Promise<GarmentDto> {
@@ -33,9 +35,9 @@ export class GarmentService {
     const repositoryGarment = await this.garmentRepository.create(garment);
 
     repositoryGarment.tags = await Promise.all(
-      repositoryGarment.tags.map(
+      repositoryGarment.tags?.map(
         async (tag) => await this.tagRepository.save(tag),
-      ),
+      ) || [],
     );
 
     repositoryGarment.user = user;
@@ -43,26 +45,36 @@ export class GarmentService {
     return this.garmentRepository.save(repositoryGarment);
   }
 
+  async getById({ id, userId }: GarmentGetById): Promise<GarmentDto> {
+    return this.garmentRepository.findOne(id, {
+      where: {
+        user: userId,
+      },
+      relations: ['tags'],
+    });
+  }
+
   findAll({
     userId,
     orderBy,
     orderDirection,
   }: GarmentFindAll): Promise<GarmentDto[]> {
-    const order: Partial<Record<keyof GarmentDto, 'ASC' | 'DESC'>> = {};
+    let queryBuilder = this.garmentRepository
+      .createQueryBuilder('garment')
+      .leftJoinAndSelect('garment.tags', 'tags')
+      .orderBy('tags.created_at', 'ASC')
+      .orderBy('garment.created_at', 'ASC')
+      .leftJoinAndSelect('garment.picture', 'picture')
+      .innerJoin('garment.user', 'user')
+      .andWhere('user.id = (:userId)', { userId: userId });
 
-    if (orderBy && orderDirection) {
-      order[orderBy] = orderDirection;
+    if (orderBy && orderDirection && queryParamToTableName[orderBy]) {
+      queryBuilder = queryBuilder.orderBy({
+        [queryParamToTableName[orderBy]]: orderDirection,
+      });
     }
 
-    order.createdAt = 'ASC';
-
-    return this.garmentRepository.find({
-      where: {
-        user: userId,
-      },
-      relations: ['tags'],
-      order,
-    });
+    return queryBuilder.getMany();
   }
 
   findByTagIds({
@@ -73,9 +85,14 @@ export class GarmentService {
   }: GarmentFindByTagIds): Promise<GarmentDto[]> {
     let queryBuilder = this.garmentRepository
       .createQueryBuilder('garment')
-      .innerJoin('garment.tags', 'tag')
+      .leftJoin('garment.tags', 'tag')
       .where('tag.id IN (:...ids)', { ids })
-      .andWhere('garment.id = (:userId)', { userId: userId });
+      .leftJoinAndSelect('garment.tags', 'tags')
+      .orderBy('tags.created_at', 'ASC')
+      .orderBy('garment.created_at', 'ASC')
+      .leftJoinAndSelect('garment.picture', 'picture')
+      .innerJoin('garment.user', 'user')
+      .andWhere('user.id = (:userId)', { userId: userId });
 
     if (orderBy && orderDirection && queryParamToTableName[orderBy]) {
       queryBuilder = queryBuilder.orderBy({
@@ -110,7 +127,12 @@ export class GarmentService {
   }
 
   async updateGarment({ garment, id }: GarmentUpdateGarment) {
-    await this.garmentRepository.update(id, garment);
+    garment.tags = await Promise.all(
+      garment.tags?.map(async (tag) => await this.tagRepository.save(tag)) ||
+        [],
+    );
+
+    await this.garmentRepository.save(garment);
 
     const updatedGarment = await this.garmentRepository.findOne(id);
 
@@ -172,6 +194,6 @@ export class GarmentService {
       throw new HttpException('Garment not found', HttpStatus.NOT_FOUND);
     }
 
-    return this.findAll({ userId: 0 });
+    return;
   }
 }

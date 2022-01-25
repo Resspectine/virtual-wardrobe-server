@@ -1,12 +1,15 @@
+import PublicFile from 'src/files/entity/publicFile.entity';
 import { Tag } from 'src/tag/entity/tag.entity';
 import User from 'src/user/entity/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   JoinTable,
   ManyToMany,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -24,9 +27,6 @@ export class Garment {
 
   @Column({ nullable: false })
   price: string;
-
-  @Column({ nullable: false, name: 'image_url' })
-  imageUrl: string;
 
   @Column({ nullable: false, name: 'wearing_amount' })
   wearingAmount: number;
@@ -46,4 +46,11 @@ export class Garment {
 
   @ManyToOne(() => User, (user) => user.garments)
   user: User;
+
+  @JoinColumn()
+  @OneToOne(() => PublicFile, {
+    eager: true,
+    nullable: true,
+  })
+  public picture?: PublicFile;
 }

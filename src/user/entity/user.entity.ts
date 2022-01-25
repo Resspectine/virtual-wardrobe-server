@@ -1,5 +1,13 @@
+import PublicFile from 'src/files/entity/publicFile.entity';
 import { Garment } from 'src/garment/entity/garment.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 class User {
@@ -17,6 +25,13 @@ class User {
 
   @OneToMany(() => Garment, (garment) => garment.user)
   public garments: Garment[];
+
+  @JoinColumn()
+  @OneToOne(() => PublicFile, {
+    eager: true,
+    nullable: true,
+  })
+  public avatar?: PublicFile;
 }
 
 export default User;

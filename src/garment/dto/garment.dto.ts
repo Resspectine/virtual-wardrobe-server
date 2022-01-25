@@ -1,4 +1,5 @@
 import { IsBoolean, IsDate, IsNumber, IsString } from 'class-validator';
+import PublicFile from 'src/files/entity/publicFile.entity';
 import { Tag } from 'src/tag/entity/tag.entity';
 
 export class GarmentDto {
@@ -14,9 +15,6 @@ export class GarmentDto {
   @IsString()
   price: string;
 
-  @IsString()
-  imageUrl: string;
-
   @IsNumber()
   wearingAmount: number;
 
@@ -30,4 +28,6 @@ export class GarmentDto {
   updatedAt: Date;
 
   tags: Tag[];
+
+  picture?: PublicFile;
 }
