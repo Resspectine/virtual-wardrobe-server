@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Garment } from 'src/garment/entity/garment.entity';
+import { UsersService } from 'src/user/service/user.service';
 import { Repository } from 'typeorm';
 import { TagDto } from '../dto/tag.dto';
 import { Tag } from '../entity/tag.entity';
@@ -12,21 +13,32 @@ export class TagService {
     private tagRepository: Repository<Tag>,
     @InjectRepository(Garment)
     private garmentRepository: Repository<Garment>,
+    private usersService: UsersService,
   ) {}
 
-  async create(tag: TagDto): Promise<TagDto> {
+  async create(tag: TagDto, userId: string): Promise<TagDto> {
+    const user = await this.usersService.getById(userId);
     const repositoryTag = await this.tagRepository.create(tag);
+
+    repositoryTag.user = user;
 
     return this.tagRepository.save(repositoryTag);
   }
 
-  findAll(): Promise<TagDto[]> {
-    return this.tagRepository.find();
+  findAll(userId: string): Promise<TagDto[]> {
+    return this.tagRepository.find({
+      where: {
+        user: userId,
+      },
+    });
   }
 
-  async deleteById(id: number): Promise<TagDto[]> {
+  async deleteById(id: string, userId: string): Promise<TagDto[]> {
     const tag = await this.tagRepository.findOne(id, {
       relations: ['garments', 'garments.tags'],
+      where: {
+        user: userId,
+      },
     });
 
     if (!tag) {

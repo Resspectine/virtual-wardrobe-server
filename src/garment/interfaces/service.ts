@@ -1,7 +1,7 @@
 import { GarmentDto } from '../dto/garment.dto';
 
 export interface AuthorizedMethod {
-  userId: number;
+  userId: string;
 }
 
 export interface GarmentCreate extends AuthorizedMethod {
@@ -9,7 +9,7 @@ export interface GarmentCreate extends AuthorizedMethod {
 }
 
 export interface GarmentGetById extends AuthorizedMethod {
-  id: number;
+  id: string;
 }
 
 export interface GarmentFindAll extends AuthorizedMethod {
@@ -30,18 +30,18 @@ export interface GarmentFind extends AuthorizedMethod {
 }
 
 export interface GarmentUpdateGarment extends AuthorizedMethod {
-  id: number;
+  id: string;
   garment: GarmentDto;
 }
 
 export interface GarmentUpdateGarmentWearAmount extends AuthorizedMethod {
-  id: number;
+  id: string;
 }
 
 export interface GarmentUpdateGarmentFavoriteStatus extends AuthorizedMethod {
-  id: number;
+  id: string;
 }
 
 export interface GarmentDeleteGarment extends AuthorizedMethod {
-  id: number;
+  id: string;
 }

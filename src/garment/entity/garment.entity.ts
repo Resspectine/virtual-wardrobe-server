@@ -1,4 +1,4 @@
-import PublicFile from 'src/files/entity/publicFile.entity';
+import LocalFile from 'src/files/entity/localFile.entity';
 import { Tag } from 'src/tag/entity/tag.entity';
 import User from 'src/user/entity/user.entity';
 import {
@@ -16,41 +16,41 @@ import {
 
 @Entity()
 export class Garment {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  public id: string;
 
   @Column({ nullable: false })
-  title: string;
+  public title: string;
 
   @Column({ nullable: false })
-  description: string;
+  public description: string;
 
   @Column({ nullable: false })
-  price: string;
+  public price: string;
 
   @Column({ nullable: false, name: 'wearing_amount' })
-  wearingAmount: number;
+  public wearingAmount: number;
 
   @Column({ nullable: false, name: 'is_favorite' })
-  isFavorite: boolean;
+  public isFavorite: boolean;
 
   @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
+  public createdAt: Date;
 
   @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt: Date;
+  public updatedAt: Date;
 
   @ManyToMany(() => Tag, (tag: Tag) => tag.garments)
   @JoinTable()
-  tags: Tag[];
+  public tags: Tag[];
 
   @ManyToOne(() => User, (user) => user.garments)
-  user: User;
+  public user: User;
 
   @JoinColumn()
-  @OneToOne(() => PublicFile, {
+  @OneToOne(() => LocalFile, {
     eager: true,
     nullable: true,
   })
-  public picture?: PublicFile;
+  public picture?: LocalFile;
 }

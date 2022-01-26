@@ -8,8 +8,10 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import JwtAuthenticationGuard from 'src/authentication/guards/jwt-authentication.guard';
-import RequestWithUser from 'src/authentication/requestWithUser.interface';
+import { UserDecorator } from 'src/decorators/user';
+import User from '../entity/user.entity';
 import { UsersService } from '../service/user.service';
+import { diskStorage } from 'multer';
 
 @Controller('user')
 export class UsersController {
@@ -17,15 +19,17 @@ export class UsersController {
 
   @Post('avatar')
   @UseGuards(JwtAuthenticationGuard)
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './uploadedFiles',
+      }),
+    }),
+  )
   async addAvatar(
-    @Req() request: RequestWithUser,
+    @UserDecorator() user: User,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    return this.usersService.addAvatar(
-      request.user.id,
-      file.buffer,
-      file.originalname,
-    );
+    return this.usersService.addAvatar(user.id, file);
   }
 }

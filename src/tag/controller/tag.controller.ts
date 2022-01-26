@@ -1,4 +1,15 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
+import JwtAuthenticationGuard from 'src/authentication/guards/jwt-authentication.guard';
+import { UserDecorator } from 'src/decorators/user';
+import User from 'src/user/entity/user.entity';
 import { TagDto } from '../dto/tag.dto';
 import { TagService } from '../service/tag.service';
 
@@ -7,17 +18,26 @@ export class TagController {
   constructor(private tagService: TagService) {}
 
   @Post('/')
-  create(@Body() garment: TagDto): Promise<TagDto> {
-    return this.tagService.create(garment);
+  @UseGuards(JwtAuthenticationGuard)
+  create(
+    @UserDecorator() user: User,
+    @Body() garment: TagDto,
+  ): Promise<TagDto> {
+    return this.tagService.create(garment, user.id);
   }
 
   @Get('/')
-  findAll(): Promise<TagDto[]> {
-    return this.tagService.findAll();
+  @UseGuards(JwtAuthenticationGuard)
+  findAll(@UserDecorator() user: User): Promise<TagDto[]> {
+    return this.tagService.findAll(user.id);
   }
 
   @Delete('/:id')
-  deleteById(@Param('id') id: string): Promise<TagDto[]> {
-    return this.tagService.deleteById(Number(id));
+  @UseGuards(JwtAuthenticationGuard)
+  deleteById(
+    @UserDecorator() user: User,
+    @Param('id') id: string,
+  ): Promise<TagDto[]> {
+    return this.tagService.deleteById(id, user.id);
   }
 }

@@ -1,5 +1,6 @@
-import PublicFile from 'src/files/entity/publicFile.entity';
+import LocalFile from 'src/files/entity/localFile.entity';
 import { Garment } from 'src/garment/entity/garment.entity';
+import { Tag } from 'src/tag/entity/tag.entity';
 import {
   Column,
   Entity,
@@ -11,8 +12,8 @@ import {
 
 @Entity()
 class User {
-  @PrimaryGeneratedColumn()
-  public id?: number;
+  @PrimaryGeneratedColumn('uuid')
+  public id: string;
 
   @Column({ unique: true })
   public email: string;
@@ -26,12 +27,15 @@ class User {
   @OneToMany(() => Garment, (garment) => garment.user)
   public garments: Garment[];
 
+  @OneToMany(() => Tag, (tag) => tag.user)
+  public tags: Tag[];
+
   @JoinColumn()
-  @OneToOne(() => PublicFile, {
+  @OneToOne(() => LocalFile, {
     eager: true,
     nullable: true,
   })
-  public avatar?: PublicFile;
+  public avatar?: LocalFile;
 }
 
 export default User;

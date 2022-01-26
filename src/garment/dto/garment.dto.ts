@@ -1,10 +1,10 @@
 import { IsBoolean, IsDate, IsNumber, IsString } from 'class-validator';
-import PublicFile from 'src/files/entity/publicFile.entity';
+import LocalFile from 'src/files/entity/localFile.entity';
 import { Tag } from 'src/tag/entity/tag.entity';
 
 export class GarmentDto {
-  @IsNumber()
-  id: number;
+  @IsString()
+  id: string;
 
   @IsString()
   title: string;
@@ -29,5 +29,5 @@ export class GarmentDto {
 
   tags: Tag[];
 
-  picture?: PublicFile;
+  picture?: LocalFile;
 }
