@@ -42,7 +42,7 @@ export class AuthenticationController {
       'Set-Cookie',
       this.authenticationService.getCookieForLogOut(),
     );
-    return response.sendStatus(200);
+    return response.send({});
   }
 
   @UseGuards(JwtAuthenticationGuard)

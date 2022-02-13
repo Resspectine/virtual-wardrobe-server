@@ -16,7 +16,7 @@ export class TagService {
     private usersService: UsersService,
   ) {}
 
-  async create(tag: TagDto, userId: string): Promise<TagDto> {
+  async create(tag: TagDto, userId: string): Promise<Tag> {
     const user = await this.usersService.getById(userId);
     const repositoryTag = await this.tagRepository.create(tag);
 

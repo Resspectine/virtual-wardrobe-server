@@ -1,8 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FilesService } from 'src/files/service/files.service';
 import { GarmentDto } from 'src/garment/dto/garment.dto';
 import { Tag } from 'src/tag/entity/tag.entity';
+import { TagService } from 'src/tag/service/tag.service';
 import { UsersService } from 'src/user/service/user.service';
 import { Repository } from 'typeorm';
 import { Garment } from '../entity/garment.entity';
@@ -24,10 +24,8 @@ export class GarmentService {
   constructor(
     @InjectRepository(Garment)
     private garmentRepository: Repository<Garment>,
-    @InjectRepository(Tag)
-    private tagRepository: Repository<Tag>,
+    private tagService: TagService,
     private userService: UsersService,
-    private fileService: FilesService,
   ) {}
 
   async create({ garment, userId }: GarmentCreate): Promise<GarmentDto> {
@@ -35,9 +33,11 @@ export class GarmentService {
     const repositoryGarment = await this.garmentRepository.create(garment);
 
     repositoryGarment.tags = await Promise.all(
-      repositoryGarment.tags?.map(
-        async (tag) => await this.tagRepository.save(tag),
-      ) || [],
+      repositoryGarment.tags?.map(async (tag) => {
+        const newTag = await this.tagService.create(tag, userId);
+
+        return newTag;
+      }) || [],
     );
 
     repositoryGarment.user = user;
@@ -109,27 +109,25 @@ export class GarmentService {
     orderDirection,
     tagIds,
   }: GarmentFind): Promise<GarmentDto[]> {
-    const isTagIdsValid = tagIds
-      ?.split(',')
-      .map(Number)
-      .every((value) => !Number.isNaN(value));
+    const parsedTagIds = tagIds?.split(',');
 
-    if (!isTagIdsValid) {
+    if (!parsedTagIds) {
       return this.findAll({ userId, orderBy, orderDirection });
     }
 
     return this.findByTagIds({
       userId,
-      ids: tagIds.split(','),
+      ids: parsedTagIds,
       orderBy,
       orderDirection,
     });
   }
 
-  async updateGarment({ garment, id }: GarmentUpdateGarment) {
+  async updateGarment({ garment, id, userId }: GarmentUpdateGarment) {
     garment.tags = await Promise.all(
-      garment.tags?.map(async (tag) => await this.tagRepository.save(tag)) ||
-        [],
+      garment.tags?.map(
+        async (tag) => await this.tagService.create(tag, userId),
+      ) || [],
     );
 
     await this.garmentRepository.save(garment);
