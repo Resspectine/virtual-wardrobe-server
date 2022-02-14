@@ -1,6 +1,8 @@
 import {
   Controller,
   Get,
+  HttpException,
+  HttpStatus,
   Param,
   Post,
   Res,
@@ -39,12 +41,16 @@ export class FilesController {
   ) {
     const file = await this.filesService.getFileById(id);
 
-    const stream = createReadStream(join(process.cwd(), file.path));
+    try {
+      const stream = createReadStream(join(process.cwd(), file.path));
 
-    response.set({
-      'Content-Disposition': `inline; filename="${file.filename}"`,
-      'Content-Type': file.mimetype,
-    });
-    return new StreamableFile(stream);
+      response.set({
+        'Content-Disposition': `inline; filename="${file.filename}"`,
+        'Content-Type': file.mimetype,
+      });
+      return new StreamableFile(stream);
+    } catch (_) {
+      throw new HttpException('File not found', HttpStatus.NOT_FOUND);
+    }
   }
 }
