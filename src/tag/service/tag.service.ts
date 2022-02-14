@@ -17,6 +17,16 @@ export class TagService {
   ) {}
 
   async create(tag: TagDto, userId: string): Promise<Tag> {
+    const existingTag = await this.tagRepository.findOne({
+      where: {
+        title: tag.title,
+      },
+    });
+
+    if (existingTag) {
+      return existingTag;
+    }
+
     const user = await this.usersService.getById(userId);
     const repositoryTag = await this.tagRepository.create(tag);
 
