@@ -32,7 +32,7 @@ export class AuthenticationController {
 
     const cookie = this.authenticationService.getCookieWithJwtToken(
       user.id,
-      headers.host,
+      headers.origin,
     );
     response.setHeader('Set-Cookie', cookie);
     user.password = undefined;
