@@ -68,7 +68,7 @@ export class AuthenticationService {
     }
   }
 
-  public getCookieWithJwtToken(userId: string, domainName?: string) {
+  public getCookieWithJwtToken(userId: string) {
     const payload: TokenPayload = { userId };
     const token = this.jwtService.sign(payload);
     return `Authentication=${token}; SameSite=None; Secure; HttpOnly; Path=/; Max-Age=${this.configService.get(
@@ -77,6 +77,6 @@ export class AuthenticationService {
   }
 
   public getCookieForLogOut() {
-    return `Authentication=; HttpOnly; Path=/; Max-Age=0`;
+    return `Authentication=; SameSite=None; Secure; HttpOnly; Path=/; Max-Age=0`;
   }
 }
