@@ -1,5 +1,5 @@
-import { Garment } from 'src/garment/entity/garment.entity';
-import User from 'src/user/entity/user.entity';
+import { Garment } from 'src/garment/garment.entity';
+import User from 'src/user/user.entity';
 import {
   Column,
   CreateDateColumn,

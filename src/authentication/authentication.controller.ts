@@ -8,12 +8,12 @@ import {
   Res,
   Get,
 } from '@nestjs/common';
-import RegisterDto from '../dto/register.dto';
-import { LocalAuthenticationGuard } from '../guards/localAuthentication.guard';
-import RequestWithUser from '../requestWithUser.interface';
-import { AuthenticationService } from '../service/authentication.service';
 import { Response } from 'express';
-import JwtAuthenticationGuard from '../guards/jwt-authentication.guard';
+import { AuthenticationService } from './authentication.service';
+import JwtAuthenticationGuard from './guards/jwt-authentication.guard';
+import { LocalAuthenticationGuard } from './guards/localAuthentication.guard';
+import RegisterDto from './register.dto';
+import RequestWithUser from './requestWithUser.interface';
 
 @Controller('authentication')
 export class AuthenticationController {

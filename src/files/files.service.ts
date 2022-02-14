@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import LocalFile from '../entity/localFile.entity';
-import { LocalFileDto } from '../dto/localFile.dto';
+import LocalFile from './localFile.entity';
+import { LocalFileDto } from './localFile.dto';
 
 @Injectable()
 export class FilesService {

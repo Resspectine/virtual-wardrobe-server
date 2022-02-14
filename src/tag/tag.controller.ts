@@ -9,9 +9,9 @@ import {
 } from '@nestjs/common';
 import JwtAuthenticationGuard from 'src/authentication/guards/jwt-authentication.guard';
 import { UserDecorator } from 'src/decorators/user';
-import User from 'src/user/entity/user.entity';
-import { TagDto } from '../dto/tag.dto';
-import { TagService } from '../service/tag.service';
+import User from 'src/user/user.entity';
+import { TagDto } from './tag.dto';
+import { TagService } from './tag.service';
 
 @Controller('tag')
 export class TagController {

@@ -14,9 +14,9 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import JwtAuthenticationGuard from 'src/authentication/guards/jwt-authentication.guard';
 import { UserDecorator } from 'src/decorators/user';
-import { GarmentDto } from 'src/garment/dto/garment.dto';
-import { GarmentService } from 'src/garment/service/garment.service';
-import UserEntity from 'src/user/entity/user.entity';
+import { GarmentDto } from 'src/garment/garment.dto';
+import UserEntity from 'src/user/user.entity';
+import { GarmentService } from './garment.service';
 
 @Controller('garment')
 export class GarmentController {

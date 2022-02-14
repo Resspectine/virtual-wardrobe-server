@@ -11,12 +11,12 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import LocalFile from '../entity/localFile.entity';
-import { FilesService } from '../service/files.service';
 import { diskStorage } from 'multer';
 import { createReadStream } from 'fs';
 import { join } from 'path';
 import { Response } from 'express';
+import LocalFile from './localFile.entity';
+import { FilesService } from './files.service';
 
 @Controller('files')
 export class FilesController {

@@ -1,12 +1,11 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { GarmentDto } from 'src/garment/dto/garment.dto';
-import { Tag } from 'src/tag/entity/tag.entity';
-import { TagService } from 'src/tag/service/tag.service';
-import { UsersService } from 'src/user/service/user.service';
+import { GarmentDto } from 'src/garment/garment.dto';
+import { TagService } from 'src/tag/tag.service';
+import { UsersService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
-import { Garment } from '../entity/garment.entity';
-import { queryParamToTableName } from '../helpers';
+import { Garment } from './garment.entity';
+import { queryParamToTableName } from './helpers';
 import {
   GarmentCreate,
   GarmentDeleteGarment,
@@ -17,7 +16,7 @@ import {
   GarmentUpdateGarment,
   GarmentUpdateGarmentFavoriteStatus,
   GarmentUpdateGarmentWearAmount,
-} from '../interfaces/service';
+} from './interfaces/service';
 
 @Injectable()
 export class GarmentService {

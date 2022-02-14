@@ -3,9 +3,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { FilesModule } from 'src/files/files.module';
 import { TagModule } from 'src/tag/tag.module';
 import { UserModule } from 'src/user/user.module';
-import { GarmentController } from './controller/garment.controller';
-import { Garment } from './entity/garment.entity';
-import { GarmentService } from './service/garment.service';
+import { GarmentController } from './garment.controller';
+import { Garment } from './garment.entity';
+import { GarmentService } from './garment.service';
 
 @Module({
   imports: [

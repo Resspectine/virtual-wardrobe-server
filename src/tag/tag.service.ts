@@ -1,10 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Garment } from 'src/garment/entity/garment.entity';
-import { UsersService } from 'src/user/service/user.service';
+import { Garment } from 'src/garment/garment.entity';
+import { UsersService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
-import { TagDto } from '../dto/tag.dto';
-import { Tag } from '../entity/tag.entity';
+import { TagDto } from './tag.dto';
+import { Tag } from './tag.entity';
 
 @Injectable()
 export class TagService {

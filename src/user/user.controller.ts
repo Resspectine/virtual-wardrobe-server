@@ -9,9 +9,9 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import JwtAuthenticationGuard from 'src/authentication/guards/jwt-authentication.guard';
 import { UserDecorator } from 'src/decorators/user';
-import User from '../entity/user.entity';
-import { UsersService } from '../service/user.service';
 import { diskStorage } from 'multer';
+import User from './user.entity';
+import { UsersService } from './user.service';
 
 @Controller('user')
 export class UsersController {

@@ -1,4 +1,4 @@
-import { GarmentDto } from '../dto/garment.dto';
+import { GarmentDto } from '../garment.dto';
 
 export interface AuthorizedMethod {
   userId: string;

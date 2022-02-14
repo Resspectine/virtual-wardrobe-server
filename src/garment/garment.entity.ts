@@ -1,6 +1,6 @@
-import LocalFile from 'src/files/entity/localFile.entity';
-import { Tag } from 'src/tag/entity/tag.entity';
-import User from 'src/user/entity/user.entity';
+import LocalFile from 'src/files/localFile.entity';
+import { Tag } from 'src/tag/tag.entity';
+import User from 'src/user/user.entity';
 import {
   Column,
   CreateDateColumn,

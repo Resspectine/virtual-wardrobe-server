@@ -1,6 +1,6 @@
 import { IsBoolean, IsDate, IsNumber, IsString } from 'class-validator';
-import LocalFile from 'src/files/entity/localFile.entity';
-import { Tag } from 'src/tag/entity/tag.entity';
+import LocalFile from 'src/files/localFile.entity';
+import { Tag } from 'src/tag/tag.entity';
 
 export class GarmentDto {
   @IsString()
