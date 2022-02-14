@@ -20,6 +20,7 @@ export class TagService {
     const existingTag = await this.tagRepository.findOne({
       where: {
         title: tag.title,
+        user: userId,
       },
     });
 
