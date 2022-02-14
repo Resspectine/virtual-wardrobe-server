@@ -41,16 +41,21 @@ export class FilesController {
   ) {
     const file = await this.filesService.getFileById(id);
 
-    try {
-      const stream = createReadStream(join(process.cwd(), file.path));
+    const stream = createReadStream(join(process.cwd(), file.path));
 
-      response.set({
-        'Content-Disposition': `inline; filename="${file.filename}"`,
-        'Content-Type': file.mimetype,
-      });
-      return new StreamableFile(stream);
-    } catch (_) {
-      throw new HttpException('File not found', HttpStatus.NOT_FOUND);
-    }
+    response.set({
+      'Content-Disposition': `inline; filename="${file.filename}"`,
+      'Content-Type': file.mimetype,
+    });
+
+    await new Promise((resolve, reject) =>
+      stream
+        .on('error', () => {
+          reject(new HttpException('File not found', HttpStatus.NOT_FOUND));
+        })
+        .on('readable', resolve),
+    );
+
+    return new StreamableFile(createReadStream(join(process.cwd(), file.path)));
   }
 }
