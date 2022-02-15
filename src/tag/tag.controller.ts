@@ -19,17 +19,14 @@ export class TagController {
 
   @Post('/')
   @UseGuards(JwtAuthenticationGuard)
-  create(
-    @UserDecorator() user: User,
-    @Body() garment: TagDto,
-  ): Promise<TagDto> {
-    return this.tagService.create(garment, user.id);
+  create(@UserDecorator() user: User, @Body() tag: TagDto): Promise<TagDto> {
+    return this.tagService.create({ tag: tag, userId: user.id });
   }
 
   @Get('/')
   @UseGuards(JwtAuthenticationGuard)
   findAll(@UserDecorator() user: User): Promise<TagDto[]> {
-    return this.tagService.findAll(user.id);
+    return this.tagService.findAll({ userId: user.id });
   }
 
   @Delete('/:id')
@@ -38,6 +35,6 @@ export class TagController {
     @UserDecorator() user: User,
     @Param('id') id: string,
   ): Promise<TagDto[]> {
-    return this.tagService.deleteById(id, user.id);
+    return this.tagService.deleteById({ id, userId: user.id });
   }
 }

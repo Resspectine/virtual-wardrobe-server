@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Garment } from 'src/garment/garment.entity';
 import { UsersService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
+import { TagCreate, TagDeleteById, TagFindAll } from './interfaces/service';
 import { TagDto } from './tag.dto';
 import { Tag } from './tag.entity';
 
@@ -16,7 +17,7 @@ export class TagService {
     private usersService: UsersService,
   ) {}
 
-  async create(tag: TagDto, userId: string): Promise<Tag> {
+  async create({ tag, userId }: TagCreate): Promise<Tag> {
     const existingTag = await this.tagRepository.findOne({
       where: {
         title: tag.title,
@@ -28,7 +29,7 @@ export class TagService {
       return existingTag;
     }
 
-    const user = await this.usersService.getById(userId);
+    const user = await this.usersService.getById({ id: userId });
     const repositoryTag = await this.tagRepository.create(tag);
 
     repositoryTag.user = user;
@@ -36,7 +37,7 @@ export class TagService {
     return this.tagRepository.save(repositoryTag);
   }
 
-  findAll(userId: string): Promise<TagDto[]> {
+  findAll({ userId }: TagFindAll): Promise<TagDto[]> {
     return this.tagRepository.find({
       where: {
         user: userId,
@@ -44,7 +45,7 @@ export class TagService {
     });
   }
 
-  async deleteById(id: string, userId: string): Promise<TagDto[]> {
+  async deleteById({ id, userId }: TagDeleteById): Promise<TagDto[]> {
     const tag = await this.tagRepository.findOne(id, {
       relations: ['garments', 'garments.tags'],
       where: {

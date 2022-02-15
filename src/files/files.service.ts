@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import LocalFile from './localFile.entity';
-import { LocalFileDto } from './localFile.dto';
+import { FileGetFileById, FileSaveLocalFile } from './interfaces/service';
 
 @Injectable()
 export class FilesService {
@@ -11,17 +11,21 @@ export class FilesService {
     private localFilesRepository: Repository<LocalFile>,
   ) {}
 
-  async getFileById(fileId: string) {
+  async getFileById({ fileId }: FileGetFileById) {
     const file = await this.localFilesRepository.findOne(fileId);
+
     if (!file) {
       throw new NotFoundException();
     }
+
     return file;
   }
 
-  async saveLocalFile(file: LocalFileDto) {
+  async saveLocalFile({ file }: FileSaveLocalFile) {
     const newFile = this.localFilesRepository.create(file);
+
     await this.localFilesRepository.save(newFile);
+
     return newFile;
   }
 }

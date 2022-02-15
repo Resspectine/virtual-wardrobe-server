@@ -31,7 +31,7 @@ export class FilesController {
     }),
   )
   create(@UploadedFile() file: Express.Multer.File): Promise<LocalFile> {
-    return this.filesService.saveLocalFile(file);
+    return this.filesService.saveLocalFile({ file });
   }
 
   @Get(':id')
@@ -39,8 +39,7 @@ export class FilesController {
     @Param('id') id: string,
     @Res({ passthrough: true }) response: Response,
   ) {
-    const file = await this.filesService.getFileById(id);
-
+    const file = await this.filesService.getFileById({ fileId: id });
     const stream = createReadStream(join(process.cwd(), file.path));
 
     response.set({

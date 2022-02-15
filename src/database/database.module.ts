@@ -9,9 +9,9 @@ import { ConfigModule } from '@nestjs/config';
       useFactory: () => ({
         url: process.env.DATABASE_URL,
         type: 'postgres',
-        ssl: {
-          rejectUnauthorized: false,
-        },
+        // ssl: {
+        //   rejectUnauthorized: false,
+        // },
         synchronize: true,
         autoLoadEntities: true,
       }),

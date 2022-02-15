@@ -1,9 +1,14 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FilesService } from 'src/files/files.service';
-import { LocalFileDto } from 'src/files/localFile.dto';
 import { Repository } from 'typeorm';
-import CreateUserDto, { UpdateUserDto } from './user.dto';
+import {
+  UserAddAvatar,
+  UserCreate,
+  UserGetByEmail,
+  UserGetById,
+  UserUpdate,
+} from './interfaces/service';
 import User from './user.entity';
 
 @Injectable()
@@ -14,48 +19,55 @@ export class UsersService {
     private readonly filesService: FilesService,
   ) {}
 
-  async getByEmail(email: string) {
+  async getByEmail({ email }: UserGetByEmail) {
     const user = await this.usersRepository.findOne({ email });
+
     if (user) {
       return user;
     }
+
     throw new HttpException(
       'User with this email does not exist',
       HttpStatus.NOT_FOUND,
     );
   }
 
-  async create(userData: CreateUserDto) {
+  async create({ userData }: UserCreate) {
     const newUser = await this.usersRepository.create(userData);
+
     await this.usersRepository.save(newUser);
+
     return newUser;
   }
 
-  async update(userData: UpdateUserDto) {
+  async update({ userData }: UserUpdate) {
     return this.usersRepository.save(userData);
   }
 
-  async getById(id: string) {
+  async getById({ id }: UserGetById) {
     const user = await this.usersRepository.findOne({
       id,
     });
+
     if (user) {
       user.password = undefined;
 
       return user;
     }
+
     throw new HttpException(
       'User with this id does not exist',
       HttpStatus.NOT_FOUND,
     );
   }
 
-  async addAvatar(userId: string, file: LocalFileDto) {
-    const avatar = await this.filesService.saveLocalFile(file);
+  async addAvatar({ file, userId }: UserAddAvatar) {
+    const avatar = await this.filesService.saveLocalFile({ file });
 
     await this.usersRepository.update(userId, {
       avatar,
     });
+
     return avatar;
   }
 }

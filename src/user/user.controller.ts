@@ -1,7 +1,6 @@
 import {
   Controller,
   Post,
-  Req,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -30,6 +29,6 @@ export class UsersController {
     @UserDecorator() user: User,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    return this.usersService.addAvatar(user.id, file);
+    return this.usersService.addAvatar({ userId: user.id, file });
   }
 }

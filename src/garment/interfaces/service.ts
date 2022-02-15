@@ -1,8 +1,5 @@
+import { AuthorizedMethod } from 'src/types';
 import { GarmentDto } from '../garment.dto';
-
-export interface AuthorizedMethod {
-  userId: string;
-}
 
 export interface GarmentCreate extends AuthorizedMethod {
   garment: GarmentDto;

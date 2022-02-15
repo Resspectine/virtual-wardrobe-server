@@ -21,7 +21,7 @@ export class AuthenticationController {
 
   @Post('register')
   async register(@Body() registrationData: RegisterDto) {
-    return this.authenticationService.register(registrationData);
+    return this.authenticationService.register({ registrationData });
   }
 
   @HttpCode(200)
@@ -29,10 +29,14 @@ export class AuthenticationController {
   @Post('log-in')
   async logIn(@Req() request: RequestWithUser, @Res() response: Response) {
     const { user } = request;
+    const cookie = this.authenticationService.getCookieWithJwtToken({
+      userId: user.id,
+    });
 
-    const cookie = this.authenticationService.getCookieWithJwtToken(user.id);
     response.setHeader('Set-Cookie', cookie);
+
     user.password = undefined;
+
     return response.send(user);
   }
 
@@ -43,6 +47,7 @@ export class AuthenticationController {
       'Set-Cookie',
       this.authenticationService.getCookieForLogOut(),
     );
+
     return response.send({});
   }
 
@@ -50,7 +55,9 @@ export class AuthenticationController {
   @Get()
   authenticate(@Req() request: RequestWithUser) {
     const user = request.user;
+
     user.password = undefined;
+
     return user;
   }
 }

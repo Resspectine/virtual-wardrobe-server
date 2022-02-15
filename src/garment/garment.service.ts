@@ -28,12 +28,12 @@ export class GarmentService {
   ) {}
 
   async create({ garment, userId }: GarmentCreate): Promise<GarmentDto> {
-    const user = await this.userService.getById(userId);
+    const user = await this.userService.getById({ id: userId });
     const repositoryGarment = await this.garmentRepository.create(garment);
 
     repositoryGarment.tags = await Promise.all(
       repositoryGarment.tags?.map(async (tag) => {
-        const newTag = await this.tagService.create(tag, userId);
+        const newTag = await this.tagService.create({ tag, userId });
 
         return newTag;
       }) || [],
@@ -50,6 +50,26 @@ export class GarmentService {
         user: userId,
       },
       relations: ['tags'],
+    });
+  }
+
+  find({
+    userId,
+    orderBy,
+    orderDirection,
+    tagIds,
+  }: GarmentFind): Promise<GarmentDto[]> {
+    const parsedTagIds = tagIds?.split(',');
+
+    if (!parsedTagIds) {
+      return this.findAll({ userId, orderBy, orderDirection });
+    }
+
+    return this.findByTagIds({
+      userId,
+      ids: parsedTagIds,
+      orderBy,
+      orderDirection,
     });
   }
 
@@ -102,30 +122,10 @@ export class GarmentService {
     return queryBuilder.getMany();
   }
 
-  find({
-    userId,
-    orderBy,
-    orderDirection,
-    tagIds,
-  }: GarmentFind): Promise<GarmentDto[]> {
-    const parsedTagIds = tagIds?.split(',');
-
-    if (!parsedTagIds) {
-      return this.findAll({ userId, orderBy, orderDirection });
-    }
-
-    return this.findByTagIds({
-      userId,
-      ids: parsedTagIds,
-      orderBy,
-      orderDirection,
-    });
-  }
-
   async updateGarment({ garment, id, userId }: GarmentUpdateGarment) {
     garment.tags = await Promise.all(
       garment.tags?.map(
-        async (tag) => await this.tagService.create(tag, userId),
+        async (tag) => await this.tagService.create({ tag, userId }),
       ) || [],
     );
 

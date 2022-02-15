@@ -8,5 +8,3 @@ export class UpdateUserDto {
   email: string;
   name: string;
 }
-
-export default CreateUserDto;
