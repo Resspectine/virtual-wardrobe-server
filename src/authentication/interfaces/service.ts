@@ -1,8 +1,8 @@
 import { AuthorizedMethod } from 'src/types';
-import { RegisterDto } from '../register.dto';
+import { CreateUserDto } from 'src/user/user.dto';
 
 export interface AuthenticationRegister {
-  registrationData: RegisterDto;
+  registrationData: CreateUserDto;
 }
 
 export interface AuthenticationGetAuthenticatedUser {
